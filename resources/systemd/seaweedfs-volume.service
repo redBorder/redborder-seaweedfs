@@ -1,0 +1,26 @@
+[Unit]
+Description=Redborder SeaweedFS volume server (object data)
+Documentation=https://github.com/seaweedfs/seaweedfs/wiki
+Wants=network-online.target
+After=network-online.target seaweedfs-master.service
+# The options are written by the cookbook seaweedfs: the unit does not start until then
+ConditionPathExists=/etc/default/seaweedfs-volume
+
+[Service]
+Type=simple
+User=seaweedfs
+Group=seaweedfs
+EnvironmentFile=/etc/default/seaweedfs-volume
+WorkingDirectory=/var/lib/seaweedfs/volume
+ExecStart=/usr/bin/weed -logtostderr=true volume $OPTIONS
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/seaweedfs
+
+[Install]
+WantedBy=multi-user.target

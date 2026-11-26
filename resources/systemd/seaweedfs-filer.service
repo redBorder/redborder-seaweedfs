@@ -1,0 +1,26 @@
+[Unit]
+Description=Redborder SeaweedFS filer with the S3 gateway
+Documentation=https://github.com/seaweedfs/seaweedfs/wiki
+Wants=network-online.target
+After=network-online.target seaweedfs-master.service seaweedfs-volume.service
+# The options are written by the cookbook seaweedfs: the unit does not start until then
+ConditionPathExists=/etc/default/seaweedfs-filer
+
+[Service]
+Type=simple
+User=seaweedfs
+Group=seaweedfs
+EnvironmentFile=/etc/default/seaweedfs-filer
+WorkingDirectory=/var/lib/seaweedfs/filer
+ExecStart=/usr/bin/weed -logtostderr=true filer $OPTIONS
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/seaweedfs
+
+[Install]
+WantedBy=multi-user.target
